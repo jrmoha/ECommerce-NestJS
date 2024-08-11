@@ -12,16 +12,13 @@ import { MongooseModule } from '@nestjs/mongoose';
       validate,
     }),
     UserModule,
-    // MongooseModule.forRootAsync({
-    //   imports: [ConfigModule],
-    //   useFactory: (configService: ConfigService) => ({
-    //     uri: configService.get('MONGO_URI'),
-    //     then: () => {
-    //       console.log(`MongoDB is running`);
-    //     },
-    //   }),
-    //   inject: [ConfigService],
-    // }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: (configService: ConfigService) => ({
+        uri: configService.get('MONGO_URI'),
+      }),
+      inject: [ConfigService],
+    }) 
   ],
   controllers: [AppController],
   providers: [AppService],

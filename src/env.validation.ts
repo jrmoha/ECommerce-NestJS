@@ -25,6 +25,18 @@ class EnvironmentVariables {
 
   @IsString()
   MONGO_URI: string;
+
+  @IsString()
+  ACCESS_TOKEN_PRIVATE_KEY: string;
+
+  @IsString()
+  ACCESS_TOKEN_PUBLIC_KEY: string;
+
+  @IsString()
+  REFRESH_TOKEN_PRIVATE_KEY: string;
+
+  @IsString()
+  REFRESH_TOKEN_PUBLIC_KEY: string;
 }
 
 export function validate(config: Record<string, unknown>) {
