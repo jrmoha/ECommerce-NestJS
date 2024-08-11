@@ -22,7 +22,7 @@ export class AuthService {
       algorithm: 'RS256',
     });
   }
-  verifyRefreshToken(token: string) {
+  verifyAccessToken(token: string) {
     try {
       return this.jwtService.verify(token, {
         publicKey: this.configService.get('ACCESS_TOKEN_PUBLIC_KEY'),

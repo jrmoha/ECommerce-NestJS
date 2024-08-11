@@ -36,7 +36,7 @@ export class User {
   password_reset_code: string | undefined;
 
   @Prop()
-  password_changed_at: Date;
+  password_reset_at: Date;
 
   compare_password: (candidate_password: string) => Promise<boolean>;
 }

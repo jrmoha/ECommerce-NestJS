@@ -18,7 +18,7 @@ import { MongooseModule } from '@nestjs/mongoose';
         uri: configService.get('MONGO_URI'),
       }),
       inject: [ConfigService],
-    }) 
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],
