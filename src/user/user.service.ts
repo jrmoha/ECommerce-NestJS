@@ -8,16 +8,16 @@ import {
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { UploadApiOptions } from 'cloudinary';
+import { nanoid } from 'nanoid';
 import { User } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
 import { AuthService } from '../auth/auth.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { nanoid } from 'nanoid';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import * as fs from 'fs/promises';
 @Injectable()
 export class UserService {
   constructor(
@@ -149,9 +149,13 @@ export class UserService {
     const user = await this.User.findById(user_id);
     if (!user || !user.confirmed) throw new NotFoundException(`user not found`);
 
+    const upload_options: UploadApiOptions = {
+      folder: `/nest/users/${user._id}`,
+      format: 'jpg',
+      resource_type: 'image',
+    };
     const { public_id, secure_url, url } =
-      await this.cloudinaryService.uploadFile(file);
-    // await fs.unlink(file.path);
+      await this.cloudinaryService.uploadFile(file, upload_options);
 
     user.profile_image = { public_id, secure_url, url };
     await user.save();

@@ -75,8 +75,6 @@ export class UserController {
     @Req() { user }: any,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    console.log(user);
-
     return this._userService.update_profile_image(user.sub, file);
   }
 }
