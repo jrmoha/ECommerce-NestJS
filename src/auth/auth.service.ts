@@ -17,7 +17,7 @@ export class AuthService {
       role: user.role,
     };
     return this.jwtService.sign(payload, {
-      expiresIn: '15m',
+      expiresIn: '1h',
       privateKey: this.configService.get('ACCESS_TOKEN_PRIVATE_KEY'),
       algorithm: 'RS256',
     });
@@ -37,11 +37,13 @@ export class AuthService {
         publicKey: this.configService.get('REFRESH_TOKEN_PUBLIC_KEY'),
       });
 
-      return this.signAccessToken({
-        _id: payload.sub,
-        username: payload.username,
-        email: payload.email,
-      });
+      return {
+        access_token: this.signAccessToken({
+          _id: payload.sub,
+          username: payload.username,
+          email: payload.email,
+        }),
+      };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
     }

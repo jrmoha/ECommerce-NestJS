@@ -26,6 +26,9 @@ export class User {
   @Prop({ required: true, minlength: 6 })
   password: string;
 
+  @Prop({})
+  password_changed_at: Date;
+
   @Prop({ enum: UserRole, default: UserRole.USER })
   role: UserRole;
 

@@ -1,3 +1,4 @@
+import { ChangePasswordDto } from './dto/change-password.dto';
 import {
   BadRequestException,
   ConflictException,
@@ -14,6 +15,7 @@ import { AuthService } from '../auth/auth.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { nanoid } from 'nanoid';
 import { ResetPasswordDto } from './dto/reset-password.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -85,6 +87,56 @@ export class UserService {
     user.password = password;
     user.password_reset_code = null;
     user.password_reset_at = null;
+    await user.save();
+
+    const access_token = this.authService.signAccessToken(user);
+    const refresh_token = this.authService.signRefreshToken(user);
+    return { access_token, refresh_token };
+  }
+  async change_password(user_id: string, { new_password }: ChangePasswordDto) {
+    const user = await this.User.findById(user_id);
+    if (!user || !user.confirmed) throw new NotFoundException('User not found');
+
+    user.password = new_password;
+    user.password_changed_at = new Date();
+    await user.save();
+
+    const access_token = this.authService.signAccessToken(user);
+    const refresh_token = this.authService.signRefreshToken(user);
+    return { access_token, refresh_token };
+  }
+  async update_profile(
+    user_id: string,
+    { username, email, first_name, last_name }: UpdateUserDto,
+  ) {
+    const user = await this.User.findById(user_id);
+    if (!user || !user.confirmed) throw new NotFoundException('User not found');
+
+    if (username || email) {
+      const propery_exists = await this.User.findOne({
+        $or: [{ email }, { username }],
+        _id: { $ne: user_id },
+      }).select('_id username email');
+
+      if (propery_exists) {
+        let err_message: string;
+
+        if (propery_exists.username === username)
+          err_message = `username ${username} already exists`;
+        else err_message = `email ${email} already exists`;
+
+        throw new ConflictException(err_message);
+      }
+    }
+
+    username && (user.username = username);
+    email && (user.email = email);
+    first_name && (user.first_name = first_name);
+    last_name && (user.last_name = last_name);
+
+    if (!user.isModified())
+      throw new BadRequestException(`No Updates have been made`);
+
     await user.save();
 
     const access_token = this.authService.signAccessToken(user);
