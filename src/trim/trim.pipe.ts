@@ -13,7 +13,7 @@ export class TrimPipe implements PipeTransform {
 
   private trim(values) {
     Object.keys(values).forEach((key) => {
-      if (key !== 'password') {
+      if (key !== 'password' && key !== 'new_password') {
         if (this.isObj(values[key])) {
           values[key] = this.trim(values[key]);
         } else {

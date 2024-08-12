@@ -1,4 +1,3 @@
-import { AuthGuard } from './../auth/auth.guard';
 import {
   Body,
   Controller,
@@ -6,8 +5,12 @@ import {
   Patch,
   Post,
   Req,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from './../auth/auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { LoginDto } from './dto/login.dto';
@@ -15,8 +18,8 @@ import { AuthService } from '../auth/auth.service';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import { Request } from 'express';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { TrimPipe } from '../trim/trim.pipe';
 
 @Controller('/user')
 export class UserController {
@@ -26,11 +29,11 @@ export class UserController {
   ) {}
 
   @Post('/signup')
-  async signup(@Body() createUserDto: CreateUserDto) {
+  async signup(@Body(TrimPipe) createUserDto: CreateUserDto) {
     return this._userService.signup(createUserDto);
   }
   @Post('/login')
-  async login(@Body() loginDto: LoginDto) {
+  async login(@Body(TrimPipe) loginDto: LoginDto) {
     return this._userService.login(loginDto);
   }
   @Post('/refresh')
@@ -38,11 +41,11 @@ export class UserController {
     return this._authService.refreshAccessToken(token);
   }
   @Post('/forgot-password')
-  async forgot_password(@Body() forgotPasswordDto: ForgotPasswordDto) {
+  async forgot_password(@Body(TrimPipe) forgotPasswordDto: ForgotPasswordDto) {
     return this._userService.forgot_password(forgotPasswordDto);
   }
   @Post('/reset-password')
-  async reset_password(@Body() resetPasswordDto: ResetPasswordDto) {
+  async reset_password(@Body(TrimPipe) resetPasswordDto: ResetPasswordDto) {
     return this._userService.reset_password(resetPasswordDto);
   }
   @UseGuards(AuthGuard)
@@ -58,8 +61,22 @@ export class UserController {
   @Patch('/update-profile')
   async update_profile(
     @Req() { user }: any,
-    @Body() updateProfileDto: UpdateUserDto,
+    @Body(TrimPipe) updateProfileDto: UpdateUserDto,
   ) {
+    console.log(updateProfileDto);
+
     return this._userService.update_profile(user.sub, updateProfileDto);
+  }
+
+  @Patch('/change-profile-image')
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileInterceptor('image'))
+  change_profile_image(
+    @Req() { user }: any,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    console.log(user);
+
+    return this._userService.update_profile_image(user.sub, file);
   }
 }

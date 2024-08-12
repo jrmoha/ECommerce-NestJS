@@ -37,6 +37,15 @@ class EnvironmentVariables {
 
   @IsString()
   REFRESH_TOKEN_PUBLIC_KEY: string;
+
+  @IsString()
+  CLOUDINARY_NAME: string;
+
+  @IsString()
+  CLOUDINARY_API_KEY: string;
+
+  @IsString()
+  CLOUDINARY_API_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {

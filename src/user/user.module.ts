@@ -4,8 +4,9 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { User, UserSchema } from './user.schema';
 import { AuthModule } from '../auth/auth.module';
-import { AuthService } from 'src/auth/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { ConfigModule } from '@nestjs/config';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [
@@ -14,6 +15,6 @@ import { ConfigModule } from '@nestjs/config';
     AuthModule,
   ],
   controllers: [UserController],
-  providers: [UserService, AuthService],
+  providers: [UserService, AuthService,CloudinaryService],
 })
 export class UserModule {}

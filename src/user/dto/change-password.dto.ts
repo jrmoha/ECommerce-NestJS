@@ -1,5 +1,5 @@
-import { IsEmail, IsStrongPassword } from 'class-validator';
-import { Match } from 'src/decorators/match.decorator';
+import { IsStrongPassword } from 'class-validator';
+import { Match } from '../../decorators/match.decorator';
 
 export class ChangePasswordDto {
   @IsStrongPassword()

@@ -16,12 +16,14 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { nanoid } from 'nanoid';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import * as fs from 'fs/promises';
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly User: Model<User>,
     private readonly authService: AuthService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async signup(user: CreateUserDto) {
@@ -142,5 +144,18 @@ export class UserService {
     const access_token = this.authService.signAccessToken(user);
     const refresh_token = this.authService.signRefreshToken(user);
     return { access_token, refresh_token };
+  }
+  async update_profile_image(user_id: string, file: Express.Multer.File) {
+    const user = await this.User.findById(user_id);
+    if (!user || !user.confirmed) throw new NotFoundException(`user not found`);
+
+    const { public_id, secure_url, url } =
+      await this.cloudinaryService.uploadFile(file);
+    // await fs.unlink(file.path);
+
+    user.profile_image = { public_id, secure_url, url };
+    await user.save();
+
+    return true;
   }
 }

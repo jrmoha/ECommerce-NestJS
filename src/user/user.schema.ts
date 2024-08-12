@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { ImageType, ImageTypeClass } from '../@types/image.type';
 
 enum UserRole {
   USER = 'user',
@@ -40,6 +41,9 @@ export class User {
 
   @Prop()
   password_reset_at: Date;
+
+  @Prop({ type: ImageTypeClass })
+  profile_image: ImageType;
 
   compare_password: (candidate_password: string) => Promise<boolean>;
 }

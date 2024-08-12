@@ -2,7 +2,6 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { TrimPipe } from './trim/trim.pipe';
 import { ResponseInterceptor } from './response/response.interceptor';
 
 async function bootstrap() {
@@ -11,7 +10,6 @@ async function bootstrap() {
     .useGlobalPipes(
       new ValidationPipe({ whitelist: true, stopAtFirstError: true }),
     )
-    .useGlobalPipes(new TrimPipe())
     .useGlobalInterceptors(new ResponseInterceptor());
 
   const configService = app.get(ConfigService);

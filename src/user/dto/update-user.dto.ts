@@ -15,7 +15,7 @@ export class UpdateUserDto {
 
   @IsString()
   @MinLength(3)
-  @MaxLength(10)
+  @MaxLength(50)
   @IsOptional()
   last_name?: string;
 
