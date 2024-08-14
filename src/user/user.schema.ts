@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
 import * as bcrypt from 'bcrypt';
+import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { ImageType, ImageTypeClass } from '../@types/image.type';
 
 enum UserRole {
@@ -9,19 +10,25 @@ enum UserRole {
 }
 export type UserDocument = HydratedDocument<User>;
 @Schema({ timestamps: true })
+@ObjectType()
 export class User {
+  @Field(() => ID)
   _id: string;
 
   @Prop({ required: true, trim: true })
+  @Field()
   first_name: string;
 
   @Prop({ required: true, trim: true })
+  @Field()
   last_name: string;
 
   @Prop({ unique: true, required: true, trim: true })
+  @Field()
   username: string;
 
   @Prop({ unique: true, required: true, trim: true })
+  @Field()
   email: string;
 
   @Prop({ required: true, minlength: 6 })
@@ -31,6 +38,7 @@ export class User {
   password_changed_at: Date;
 
   @Prop({ enum: UserRole, default: UserRole.USER })
+  @Field()
   role: UserRole;
 
   @Prop({ default: false })
@@ -43,6 +51,7 @@ export class User {
   password_reset_at: Date;
 
   @Prop({ type: ImageTypeClass })
+  @Field(() => ImageTypeClass, { nullable: true })
   profile_image: ImageType;
 
   compare_password: (candidate_password: string) => Promise<boolean>;

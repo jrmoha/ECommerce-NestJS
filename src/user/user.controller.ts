@@ -10,7 +10,7 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from './../auth/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserService } from './user.service';
 import { LoginDto } from './dto/login.dto';
@@ -19,7 +19,7 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { TrimPipe } from '../trim/trim.pipe';
+import { TrimPipe } from '../pipes/trim.pipe';
 
 @Controller('/user')
 export class UserController {

@@ -5,13 +5,16 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { Request } from 'express';
-import { AuthService } from './auth.service';
+import { AuthService } from '../auth/auth.service';
+import { GqlExecutionContext } from '@nestjs/graphql';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
   constructor(private readonly authService: AuthService) {}
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest() as Request;
+    const ctx = GqlExecutionContext.create(context);
+    const request =
+      ctx.getContext().req || (context.switchToHttp().getRequest() as Request);
     const authHeader = request.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer'))
@@ -19,7 +22,7 @@ export class AuthGuard implements CanActivate {
 
     const token = authHeader.split(' ')[1];
     const user = this.authService.verifyAccessToken(token);
-    
+
     request['user'] = user;
     return true;
   }

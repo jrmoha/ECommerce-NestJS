@@ -1,4 +1,4 @@
-import { ChangePasswordDto } from './dto/change-password.dto';
+import { SearchUserQueryBuilder } from './../common/user.query.builder';
 import {
   BadRequestException,
   ConflictException,
@@ -7,9 +7,10 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import { FilterQuery, Model } from 'mongoose';
 import { UploadApiOptions } from 'cloudinary';
 import { nanoid } from 'nanoid';
+import { ChangePasswordDto } from './dto/change-password.dto';
 import { User } from './user.schema';
 import { CreateUserDto } from './dto/create-user.dto';
 import { LoginDto } from './dto/login.dto';
@@ -18,16 +19,17 @@ import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
+import { SearchUserDto } from './dto/search-user.dto';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private readonly User: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<User>,
     private readonly authService: AuthService,
     private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   async signup(user: CreateUserDto) {
-    const user_exists = await this.User.findOne({
+    const user_exists = await this.userModel.findOne({
       $or: [{ username: user.username }, { email: user.email }],
     });
     if (user_exists) {
@@ -36,10 +38,10 @@ export class UserService {
       throw new ConflictException(`This ${field_exists} Already Registered`);
     }
 
-    return this.User.create({ ...user, confirmed: true });
+    return this.userModel.create({ ...user, confirmed: true });
   }
   async login({ email, password }: LoginDto) {
-    const user = await this.User.findOne({ email });
+    const user = await this.userModel.findOne({ email });
     if (!user || !user.confirmed)
       throw new NotFoundException(
         `Email ${email} not found or user is not confirmed`,
@@ -53,7 +55,7 @@ export class UserService {
     return { access_token, refresh_token };
   }
   async forgot_password({ email }: ForgotPasswordDto) {
-    const user = await this.User.findOne({ email });
+    const user = await this.userModel.findOne({ email });
     if (!user || !user.confirmed)
       throw new NotFoundException(`Email ${email} not found`);
 
@@ -71,7 +73,7 @@ export class UserService {
     return { reset_code };
   }
   async reset_password({ email, reset_code, password }: ResetPasswordDto) {
-    const user = await this.User.findOne({ email });
+    const user = await this.userModel.findOne({ email });
     if (!user || !user.confirmed)
       throw new NotFoundException(`Email ${email} not found`);
 
@@ -96,7 +98,7 @@ export class UserService {
     return { access_token, refresh_token };
   }
   async change_password(user_id: string, { new_password }: ChangePasswordDto) {
-    const user = await this.User.findById(user_id);
+    const user = await this.userModel.findById(user_id);
     if (!user || !user.confirmed) throw new NotFoundException('User not found');
 
     user.password = new_password;
@@ -111,14 +113,16 @@ export class UserService {
     user_id: string,
     { username, email, first_name, last_name }: UpdateUserDto,
   ) {
-    const user = await this.User.findById(user_id);
+    const user = await this.userModel.findById(user_id);
     if (!user || !user.confirmed) throw new NotFoundException('User not found');
 
     if (username || email) {
-      const propery_exists = await this.User.findOne({
-        $or: [{ email }, { username }],
-        _id: { $ne: user_id },
-      }).select('_id username email');
+      const propery_exists = await this.userModel
+        .findOne({
+          $or: [{ email }, { username }],
+          _id: { $ne: user_id },
+        })
+        .select('_id username email');
 
       if (propery_exists) {
         let err_message: string;
@@ -146,7 +150,7 @@ export class UserService {
     return { access_token, refresh_token };
   }
   async update_profile_image(user_id: string, file: Express.Multer.File) {
-    const user = await this.User.findById(user_id);
+    const user = await this.userModel.findById(user_id);
     if (!user || !user.confirmed) throw new NotFoundException(`user not found`);
 
     const upload_options: UploadApiOptions = {
@@ -160,6 +164,25 @@ export class UserService {
     user.profile_image = { public_id, secure_url, url };
     await user.save();
 
-    return true;
+    return { public_id, secure_url, url };
+  }
+
+  async get_user(id: string) {
+    return this.userModel.findById(id);
+  }
+  async search(searchInput: SearchUserDto) {
+    const SearchUserQueryBuilderInstance = new SearchUserQueryBuilder(
+      searchInput,
+    )
+      .search()
+      .paginate();
+    const filter = SearchUserQueryBuilderInstance.Filter;
+    const [limit, offset] = SearchUserQueryBuilderInstance.Paging;
+
+    return this.userModel
+      .find({ ...filter, confirmed: true })
+      .limit(limit)
+      .skip(offset)
+      .lean();
   }
 }

@@ -1,0 +1,43 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type ImageTypeClass {
+  public_id: String!
+  url: String!
+  secure_url: String!
+}
+
+type User {
+  _id: ID!
+  first_name: String!
+  last_name: String!
+  username: String!
+  email: String!
+  role: String!
+  profile_image: ImageTypeClass
+}
+
+type Query {
+  user(id: String!): User
+  search_users(input: SearchUserDto!): [User!]
+}
+
+input SearchUserDto {
+  username: String
+  email: String
+  firstName: String
+  lastName: String
+  order: OrderInput
+  pagination: PaginationInput
+}
+
+input OrderInput {
+  orderBy: String
+  orderDirection: String
+}
+
+input PaginationInput {
+  limit: Float
+  offset: Float
+}

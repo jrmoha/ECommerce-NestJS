@@ -1,8 +1,8 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
-import { ResponseInterceptor } from './response/response.interceptor';
+import { AppModule } from './app.module';
+import { ResponseInterceptor } from './interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -10,7 +10,7 @@ async function bootstrap() {
     .useGlobalPipes(
       new ValidationPipe({ whitelist: true, stopAtFirstError: true }),
     )
-    .useGlobalInterceptors(new ResponseInterceptor());
+    // .useGlobalInterceptors(new ResponseInterceptor());
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT');
