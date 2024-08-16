@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { Field, ID, ObjectType } from '@nestjs/graphql';
 import { ImageType, ImageTypeClass } from '../@types/image.type';
 
-enum UserRole {
+export enum UserRole {
   USER = 'user',
   ADMIN = 'admin',
 }
@@ -53,6 +53,10 @@ export class User {
   @Prop({ type: ImageTypeClass })
   @Field(() => ImageTypeClass, { nullable: true })
   profile_image: ImageType;
+
+  @Prop({ type: Types.ObjectId, ref: 'user' })
+  @Field(() => User, { nullable: true })
+  added_by?: string;
 
   compare_password: (candidate_password: string) => Promise<boolean>;
 }

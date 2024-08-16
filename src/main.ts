@@ -6,11 +6,15 @@ import { ResponseInterceptor } from './interceptors/response.interceptor';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app
-    .useGlobalPipes(
-      new ValidationPipe({ whitelist: true, stopAtFirstError: true }),
-    )
-    // .useGlobalInterceptors(new ResponseInterceptor());
+  app.enableCors({ origin: 'localhost:3000', credentials: true });
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      stopAtFirstError: true,
+      transform: true,
+    }),
+  );
+  // .useGlobalInterceptors(new ResponseInterceptor());
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT');

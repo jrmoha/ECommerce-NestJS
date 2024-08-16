@@ -42,6 +42,7 @@ export class AuthService {
           _id: payload.sub,
           username: payload.username,
           email: payload.email,
+          role: payload.role,
         }),
       };
     } catch {

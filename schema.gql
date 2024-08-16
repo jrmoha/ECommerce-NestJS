@@ -16,6 +16,7 @@ type User {
   email: String!
   role: String!
   profile_image: ImageTypeClass
+  added_by: User
 }
 
 type Query {

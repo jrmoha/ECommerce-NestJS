@@ -10,16 +10,22 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { AuthGuard } from '../guards/auth.guard';
-import { CreateUserDto } from './dto/create-user.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
 import { UserService } from './user.service';
-import { LoginDto } from './dto/login.dto';
 import { AuthService } from '../auth/auth.service';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  UpdateUserDto,
+  ForgotPasswordDto,
+  ResetPasswordDto,
+  ChangePasswordDto,
+  CreateUserDto,
+  LoginDto,
+  AddAdminDto,
+} from './dto';
 import { TrimPipe } from '../pipes/trim.pipe';
+import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from './user.schema';
+import { RolesGuard } from '../auth/guard/roles.guard';
 
 @Controller('/user')
 export class UserController {
@@ -76,5 +82,12 @@ export class UserController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     return this._userService.update_profile_image(user.sub, file);
+  }
+  @Post('/add-admin')
+  @Roles(UserRole.ADMIN)
+  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard)
+  async add_admin(@Req() { user }: any,@Body(TrimPipe) addAdminDto: AddAdminDto) {
+    return this._userService.add_admin(user.sub, addAdminDto);
   }
 }

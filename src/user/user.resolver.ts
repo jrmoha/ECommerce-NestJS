@@ -2,8 +2,8 @@ import { Args, Query, Resolver } from '@nestjs/graphql';
 import { UserService } from './user.service';
 import { User } from './user.schema';
 import { UseGuards } from '@nestjs/common';
-import { AuthGuard } from 'src/guards/auth.guard';
-import { SearchUserDto } from './dto/search-user.dto';
+import { AuthGuard } from '../auth/guard/auth.guard';
+import { SearchUserDto } from './dto';
 
 @Resolver(() => User)
 export class UserResolver {

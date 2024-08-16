@@ -7,19 +7,22 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { FilterQuery, Model } from 'mongoose';
+import { Model } from 'mongoose';
 import { UploadApiOptions } from 'cloudinary';
 import { nanoid } from 'nanoid';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { User } from './user.schema';
-import { CreateUserDto } from './dto/create-user.dto';
-import { LoginDto } from './dto/login.dto';
+import { User, UserRole } from './user.schema';
 import { AuthService } from '../auth/auth.service';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
-import { ResetPasswordDto } from './dto/reset-password.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
-import { SearchUserDto } from './dto/search-user.dto';
+import {
+  SearchUserDto,
+  ResetPasswordDto,
+  ForgotPasswordDto,
+  LoginDto,
+  CreateUserDto,
+  ChangePasswordDto,
+  UpdateUserDto,
+  AddAdminDto,
+} from './dto';
 @Injectable()
 export class UserService {
   constructor(
@@ -184,5 +187,21 @@ export class UserService {
       .limit(limit)
       .skip(offset)
       .lean();
+  }
+
+  async add_admin(admin_id: string, { new_admin_email }: AddAdminDto) {
+    const new_admin = await this.userModel.findOne({ email: new_admin_email });
+    if (!new_admin) throw new NotFoundException('Email Not Found');
+
+    if (!new_admin.confirmed)
+      throw new BadRequestException('Confirm Email First');
+
+    if (new_admin.role == UserRole.ADMIN) return true;
+
+    new_admin.role = UserRole.ADMIN;
+    new_admin.added_by = admin_id;
+    await new_admin.save();
+
+    return true;
   }
 }
