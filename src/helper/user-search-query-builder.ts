@@ -1,5 +1,5 @@
-import { FilterQuery, Model, Query } from 'mongoose';
-import { SearchUserDto } from './../user/dto/search-user.dto';
+import { FilterQuery } from 'mongoose';
+import { SearchUserDto } from '../user/dto';
 import { User } from '../user/user.schema';
 
 export class SearchUserQueryBuilder {
@@ -46,7 +46,6 @@ export class SearchUserQueryBuilder {
     return this.filter;
   }
   get Paging() {
-    return [this.limit,this.offset];
+    return [this.limit, this.offset];
   }
- 
 }

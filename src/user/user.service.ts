@@ -1,4 +1,4 @@
-import { SearchUserQueryBuilder } from './../common/user.query.builder';
+import { SearchUserQueryBuilder } from '../helper/user-search-query-builder';
 import {
   BadRequestException,
   ConflictException,
