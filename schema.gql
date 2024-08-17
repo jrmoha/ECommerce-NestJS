@@ -19,9 +19,20 @@ type User {
   added_by: User
 }
 
+type Category {
+  _id: ID!
+  name: String!
+  slug: String!
+  image: ImageTypeClass!
+  addedBy: User
+}
+
 type Query {
   user(id: String!): User
   search_users(input: SearchUserDto!): [User!]
+  get_all: [Category!]!
+  get_category(input: GetCategoryDto!): Category
+  search_categories(input: SearchCategoryDto!): [Category!]!
 }
 
 input SearchUserDto {
@@ -41,4 +52,15 @@ input OrderInput {
 input PaginationInput {
   limit: Float
   offset: Float
+}
+
+input GetCategoryDto {
+  id: String!
+}
+
+input SearchCategoryDto {
+  name: String
+  addedBy: String
+  order: OrderInput
+  pagination: PaginationInput
 }

@@ -9,6 +9,7 @@ import { AuthService } from '../auth/auth.service';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
 import { User, UserSchema } from '../user/user.schema';
 import { CategoryResolver } from './category.resolver';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { CategoryResolver } from './category.resolver';
     CloudinaryModule,
   ],
   controllers: [CategoryController],
-  providers: [CategoryService, AuthService, CategoryResolver],
+  providers: [CategoryService, AuthService, CategoryResolver, UserService],
 })
 export class CategoryModule {}

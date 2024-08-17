@@ -7,11 +7,13 @@ import {
 import { InjectModel } from '@nestjs/mongoose';
 import { Category } from './category.schema';
 import { Model } from 'mongoose';
-import { CreateCategoryDto, UpdateCategoryDto } from './dto';
+import { CreateCategoryDto, GetCategoryDto, UpdateCategoryDto } from './dto';
 import { UploadApiOptions } from 'cloudinary';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { nanoid } from 'nanoid';
 import { User, UserRole } from 'src/user/user.schema';
+import { SearchCategoryDto } from './dto/search-category.dto';
+import { CategorySearchQueryBuilder } from './helper/category-search-query-builder';
 
 @Injectable()
 export class CategoryService {
@@ -82,5 +84,28 @@ export class CategoryService {
     }
     if (category.isModified()) await category.save();
     return category;
+  }
+  async get_all() {
+    return this.categoryModel.find().lean().select('-__v');
+  }
+  async get_category({ id }: GetCategoryDto) {
+    return this.categoryModel.findById(id);
+  }
+  async search_categories(searchCategoryDto: SearchCategoryDto) {
+    const CategorySearchQueryBuilderInstance = new CategorySearchQueryBuilder(
+      searchCategoryDto,
+    )
+      .search()
+      .paginate();
+    const filter = CategorySearchQueryBuilderInstance.Filter;
+    const [limit, offset] = CategorySearchQueryBuilderInstance.Paging;
+    const sort = CategorySearchQueryBuilderInstance.Sort;
+
+    return this.categoryModel
+      .find(filter)
+      .limit(limit)
+      .skip(offset)
+      .sort(sort)
+      .lean();
   }
 }

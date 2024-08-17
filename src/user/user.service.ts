@@ -1,4 +1,3 @@
-import { SearchUserQueryBuilder } from '../helper/user-search-query-builder';
 import {
   BadRequestException,
   ConflictException,
@@ -11,6 +10,7 @@ import { Model } from 'mongoose';
 import { UploadApiOptions } from 'cloudinary';
 import { nanoid } from 'nanoid';
 import { User, UserRole } from './user.schema';
+import { SearchUserQueryBuilder } from './helper/user-search-query-builder';
 import { AuthService } from '../auth/auth.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import {

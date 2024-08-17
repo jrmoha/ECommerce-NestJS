@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
-import { SearchUserDto } from '../user/dto';
-import { User } from '../user/user.schema';
+import { SearchUserDto } from '../dto';
+import { User } from '../user.schema';
 
 export class SearchUserQueryBuilder {
   private readonly filter: FilterQuery<User>;
