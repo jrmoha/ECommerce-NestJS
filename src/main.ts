@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
-import { ResponseInterceptor } from './interceptors/response.interceptor';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -14,7 +14,17 @@ async function bootstrap() {
       transform: true,
     }),
   );
-  // .useGlobalInterceptors(new ResponseInterceptor());
+
+  const options = new DocumentBuilder()
+    .setTitle('E-Commerce API')
+    .setDescription('The E-Commerce API description')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, options);
+  SwaggerModule.setup('api', app, document, {
+    jsonDocumentUrl: '/api-json',
+  });
 
   const configService = app.get(ConfigService);
   const PORT = configService.get<number>('PORT');

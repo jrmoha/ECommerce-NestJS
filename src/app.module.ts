@@ -8,7 +8,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { CategoryModule } from './category/category.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
