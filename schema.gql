@@ -27,12 +27,22 @@ type Category {
   addedBy: User
 }
 
+type SubCategory {
+  _id: ID!
+  name: String!
+  slug: String!
+  image: ImageTypeClass!
+  category: Category!
+  addedBy: User!
+}
+
 type Query {
   user(id: String!): User
   search_users(input: SearchUserDto!): [User!]
-  get_all: [Category!]!
+  get_all_categories: [Category!]!
   get_category(input: GetCategoryDto!): Category
   search_categories(input: SearchCategoryDto!): [Category!]!
+  findAllSubCategories: [SubCategory!]!
 }
 
 input SearchUserDto {

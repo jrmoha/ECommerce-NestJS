@@ -7,20 +7,31 @@ import { SubCategory, SubCategorySchema } from './sub-category.schema';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { Category, CategorySchema } from '../category/category.schema';
 import { AuthService } from '../auth/auth.service';
-import { AuthModule } from '../auth/auth.module';
 import { CloudinaryModule } from '../cloudinary/cloudinary.module';
+import { SubCategoryResolver } from './sub-category.resolver';
+import { CategoryService } from 'src/category/category.service';
+import { UserService } from 'src/user/user.service';
+import { User, UserSchema } from 'src/user/user.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
       { name: SubCategory.name, schema: SubCategorySchema },
       { name: Category.name, schema: CategorySchema },
+      { name: User.name, schema: UserSchema },
     ]),
     ConfigModule,
-    AuthModule,
+
     CloudinaryModule,
   ],
   controllers: [SubCategoryController],
-  providers: [SubCategoryService, AuthService, CloudinaryService],
+  providers: [
+    SubCategoryService,
+    CategoryService,
+    UserService,
+    AuthService,
+    CloudinaryService,
+    SubCategoryResolver,
+  ],
 })
 export class SubCategoryModule {}

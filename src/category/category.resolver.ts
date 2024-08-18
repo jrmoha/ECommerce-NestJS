@@ -14,7 +14,7 @@ export class CategoryResolver {
   ) {}
 
   @Query(() => [Category])
-  async get_all() {
+  async get_all_categories() {
     return this.categoryService.get_all();
   }
 

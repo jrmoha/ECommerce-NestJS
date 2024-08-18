@@ -51,4 +51,7 @@ export class SubCategoryService {
       slug: name,
     });
   }
+  async findMany() {
+    return this.subCategoryModel.find({}).lean();
+  }
 }
