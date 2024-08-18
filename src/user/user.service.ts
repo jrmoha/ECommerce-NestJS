@@ -10,7 +10,7 @@ import { Model } from 'mongoose';
 import { UploadApiOptions } from 'cloudinary';
 import { nanoid } from 'nanoid';
 import { User, UserRole } from './user.schema';
-import { SearchUserQueryBuilder } from './helper/user-search-query-builder';
+import { SearchUserQuery } from './helper/user-search-query-builder';
 import { AuthService } from '../auth/auth.service';
 import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import {
@@ -174,9 +174,7 @@ export class UserService {
     return this.userModel.findById(id);
   }
   async search(searchInput: SearchUserDto) {
-    const SearchUserQueryBuilderInstance = new SearchUserQueryBuilder(
-      searchInput,
-    )
+    const SearchUserQueryBuilderInstance = new SearchUserQuery(searchInput)
       .search()
       .paginate();
     const filter = SearchUserQueryBuilderInstance.Filter;

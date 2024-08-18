@@ -1,12 +1,14 @@
-import { FilterQuery } from 'mongoose';
+import { FilterQuery, SortOrder } from 'mongoose';
 import { SearchUserDto } from '../dto';
 import { User } from '../user.schema';
+import { SearchQueryBuilder } from 'src/common/QueryBuilder';
 
-export class SearchUserQueryBuilder {
+export class SearchUserQuery implements SearchQueryBuilder<User> {
   private readonly filter: FilterQuery<User>;
   private readonly searchInput: SearchUserDto;
   private limit: number;
   private offset: number;
+  private sort: Record<string, SortOrder>;
 
   constructor(searchInput: SearchUserDto) {
     this.filter = {};
@@ -42,10 +44,13 @@ export class SearchUserQueryBuilder {
     this.offset = this.searchInput.pagination?.offset ?? 0;
     return this;
   }
+  get Sort() {
+    return this.sort;
+  }
   get Filter() {
     return this.filter;
   }
-  get Paging() {
+  get Paging(): [number, number] {
     return [this.limit, this.offset];
   }
 }

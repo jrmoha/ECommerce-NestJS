@@ -7,6 +7,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver } from '@nestjs/apollo';
 import { CategoryModule } from './category/category.module';
+import { SubCategoryModule } from './sub-category/sub-category.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CategoryModule } from './category/category.module';
     UserModule,
     CloudinaryModule,
     CategoryModule,
+    SubCategoryModule,
   ],
 })
 export class AppModule {}

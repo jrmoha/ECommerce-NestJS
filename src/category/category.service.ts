@@ -13,7 +13,7 @@ import { CloudinaryService } from '../cloudinary/cloudinary.service';
 import { nanoid } from 'nanoid';
 import { User, UserRole } from 'src/user/user.schema';
 import { SearchCategoryDto } from './dto/search-category.dto';
-import { CategorySearchQueryBuilder } from './helper/category-search-query-builder';
+import { CategorySearchQuery } from './helper/category-search-query-builder';
 
 @Injectable()
 export class CategoryService {
@@ -92,7 +92,7 @@ export class CategoryService {
     return this.categoryModel.findById(id);
   }
   async search_categories(searchCategoryDto: SearchCategoryDto) {
-    const CategorySearchQueryBuilderInstance = new CategorySearchQueryBuilder(
+    const CategorySearchQueryBuilderInstance = new CategorySearchQuery(
       searchCategoryDto,
     )
       .search()

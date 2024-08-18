@@ -21,15 +21,15 @@ import { UserRole } from '../user/user.schema';
 import { OnlyIDParamDTO } from '../common/dto';
 
 @Controller('category')
+@Roles(UserRole.ADMIN)
+@UseGuards(RolesGuard)
+@UseGuards(AuthGuard)
 @ApiTags('Category')
 @ApiBearerAuth()
 export class CategoryController {
   constructor(private readonly categoryService: CategoryService) {}
 
   @Post('/create')
-  @Roles(UserRole.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async add_category(
     @Req() { user }: any,
@@ -40,9 +40,6 @@ export class CategoryController {
   }
 
   @Patch('/update/:id')
-  @Roles(UserRole.ADMIN)
-  @UseGuards(RolesGuard)
-  @UseGuards(AuthGuard)
   @UseInterceptors(FileInterceptor('image'))
   async update_category(
     @Param() { id }: OnlyIDParamDTO,
